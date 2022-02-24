@@ -3,6 +3,9 @@ package com.redis;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/**
+ * shouzhi@duan
+ */
 @SpringBootApplication
 public class SpringbootRedisApplication {
 
