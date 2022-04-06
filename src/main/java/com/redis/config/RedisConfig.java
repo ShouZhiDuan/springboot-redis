@@ -41,8 +41,9 @@ import java.util.List;
 @ConditionalOnClass(RedisOperations.class)
 @EnableConfigurationProperties(RedisProperties.class)
 public class RedisConfig {
-    @Value("#{'${IP.white.list}'.split(',')}")
-    List<String> ipWhiteList;
+
+//    @Value("#{'${IP.white.list}'.split(',')}")
+//    List<String> ipWhiteList;
 
 
     /**
@@ -129,6 +130,7 @@ public class RedisConfig {
 
     /**
      * protobuf序列化方式
+     * to see https://www.codeleading.com/article/93512371167/
      */
     @Bean
     @ConditionalOnMissingBean(name = "protobufRedisTemplate")

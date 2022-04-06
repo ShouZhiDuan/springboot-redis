@@ -1,5 +1,6 @@
 package com.redis;
 
+import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import com.redis.dto.UserDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -47,16 +48,17 @@ class SpringbootRedisApplicationTests {
         System.out.println(userDto);
     }
 
-
     /**
      * protobuf序列化测试
      */
     @Test
     void protobufTest() {
-        //protobufRedisTemplate.opsForValue().set("test:user:proto:name","Hello fast");
-        protobufRedisTemplate.opsForValue().set("test:user:proto",new UserDto("testNme",1));
-        UserDto userDto = (UserDto) fastRedisTemplate.opsForValue().get("test:user:prto");
-        System.out.println(userDto);
+        String txt = "Hello proto";
+        protobufRedisTemplate.opsForValue().set("test:user:proto:name",txt);
+        UserDto userDto = new UserDto("testNme", 1);
+        protobufRedisTemplate.opsForValue().set("test:user:proto",userDto);
+        //UserDto userDto = (UserDto) protobufRedisTemplate.opsForValue().get("test:user:prto");
+        //System.out.println(userDto);
     }
 
 

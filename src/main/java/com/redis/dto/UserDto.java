@@ -14,6 +14,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDto {
+    @Protobuf
     private String name;
+    @Protobuf
     private int age;
 }
