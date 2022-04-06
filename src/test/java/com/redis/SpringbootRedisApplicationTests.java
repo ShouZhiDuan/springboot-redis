@@ -22,6 +22,8 @@ class SpringbootRedisApplicationTests {
     RedisTemplate<Object, Object> jacksonRedisTemplate;
     @Autowired
     RedisTemplate<Object, Object> fastRedisTemplate;
+    @Autowired
+    RedisTemplate<Object, Object> protobufRedisTemplate;
 
     /**
      * jsckson序列化测试
@@ -46,7 +48,16 @@ class SpringbootRedisApplicationTests {
     }
 
 
-
+    /**
+     * protobuf序列化测试
+     */
+    @Test
+    void protobufTest() {
+        //protobufRedisTemplate.opsForValue().set("test:user:proto:name","Hello fast");
+        protobufRedisTemplate.opsForValue().set("test:user:proto",new UserDto("testNme",1));
+        UserDto userDto = (UserDto) fastRedisTemplate.opsForValue().get("test:user:prto");
+        System.out.println(userDto);
+    }
 
 
 

@@ -1,6 +1,7 @@
 package com.redis.config;
 
 import com.alibaba.fastjson.parser.Feature;
+import com.alibaba.fastjson.parser.ParserConfig;
 import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.alibaba.fastjson.serializer.SerializeWriter;
 import com.alibaba.fastjson.serializer.SerializerFeature;
@@ -10,6 +11,8 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
+import com.redis.serializer.ProtobufRedisSerializer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
@@ -27,6 +30,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 /**
  * @Auther: ShouZhi@Duan
@@ -37,6 +41,10 @@ import java.time.format.DateTimeFormatter;
 @ConditionalOnClass(RedisOperations.class)
 @EnableConfigurationProperties(RedisProperties.class)
 public class RedisConfig {
+    @Value("#{'${IP.white.list}'.split(',')}")
+    List<String> ipWhiteList;
+
+
     /**
      * jackson序列化方式
      * @param lettuceConnectionFactory
@@ -105,11 +113,34 @@ public class RedisConfig {
             }
             out.writeString(DateTimeFormatter.ofPattern("HH:mm:ss").format((LocalTime) object));
         });
+        //to see https://www.codeleading.com/article/93512371167/
+        // 指定 fastJson 白名单
+        //ipWhiteList.stream().forEach(ipWhite -> ParserConfig.getGlobalInstance().addAccept(ipWhite));
+        //指定包解析
+        //ParserConfig.getGlobalInstance().addAccept("com.study.www");
         fastJsonConfig.setSerializeConfig(serializeConfig);
         fastJsonConfig.setFeatures(Feature.SupportAutoType);
         fastJsonConfig.setSerializerFeatures(SerializerFeature.WriteClassName);
         redisTemplate.setValueSerializer(fastJsonRedisSerializer);
         redisTemplate.setHashValueSerializer(fastJsonRedisSerializer);
+        redisTemplate.afterPropertiesSet();
+        return redisTemplate;
+    }
+
+    /**
+     * protobuf序列化方式
+     */
+    @Bean
+    @ConditionalOnMissingBean(name = "protobufRedisTemplate")
+    public RedisTemplate protobufRedisTemplate(@Lazy RedisConnectionFactory lettuceConnectionFactory) {
+        RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(lettuceConnectionFactory);
+        StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
+        ProtobufRedisSerializer protobufRedisSerializer = new ProtobufRedisSerializer(Object.class);
+        redisTemplate.setKeySerializer(stringRedisSerializer);
+        redisTemplate.setValueSerializer(protobufRedisSerializer);
+        redisTemplate.setHashKeySerializer(stringRedisSerializer);
+        redisTemplate.setHashValueSerializer(protobufRedisSerializer);
         redisTemplate.afterPropertiesSet();
         return redisTemplate;
     }

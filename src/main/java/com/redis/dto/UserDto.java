@@ -1,5 +1,6 @@
 package com.redis.dto;
 
+import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
