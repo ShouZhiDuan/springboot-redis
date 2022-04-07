@@ -1,7 +1,6 @@
 package com.redis.config;
 
 import com.alibaba.fastjson.parser.Feature;
-import com.alibaba.fastjson.parser.ParserConfig;
 import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.alibaba.fastjson.serializer.SerializeWriter;
 import com.alibaba.fastjson.serializer.SerializerFeature;
@@ -12,7 +11,6 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import com.redis.serializer.ProtobufRedisSerializer;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
@@ -26,11 +24,11 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericToStringSerializer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 /**
  * @Auther: ShouZhi@Duan
@@ -137,13 +135,13 @@ public class RedisConfig {
     public RedisTemplate protobufRedisTemplate(@Lazy RedisConnectionFactory lettuceConnectionFactory) {
         RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(lettuceConnectionFactory);
+        redisTemplate.afterPropertiesSet();
         StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
         ProtobufRedisSerializer protobufRedisSerializer = new ProtobufRedisSerializer(Object.class);
         redisTemplate.setKeySerializer(stringRedisSerializer);
         redisTemplate.setValueSerializer(protobufRedisSerializer);
         redisTemplate.setHashKeySerializer(stringRedisSerializer);
         redisTemplate.setHashValueSerializer(protobufRedisSerializer);
-        redisTemplate.afterPropertiesSet();
         return redisTemplate;
     }
 
