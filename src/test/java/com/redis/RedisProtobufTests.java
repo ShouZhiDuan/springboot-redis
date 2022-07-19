@@ -23,6 +23,9 @@ class RedisProtobufTests {
     @Autowired
     private RedisProtoClient redisProtoClient;
 
+    /**
+     * Redis Protobuf测试
+     */
     @Test
     public void testSet(){
         TestProtoDTO testProtoDTO = new TestProtoDTO();

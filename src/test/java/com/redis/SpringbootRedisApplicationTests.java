@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -92,6 +94,33 @@ class SpringbootRedisApplicationTests {
         testProtoDTO.setName("testName");
         testProtoDTO.setAge(1);
         fastRedisTemplate.opsForValue().set("test_fast_proto_1", testProtoDTO);
+    }
+
+    @Test
+    public void testPerformance() {
+        long l1 = System.currentTimeMillis();
+        for(int a = 0; a < 100000000; a++){
+            fastRedisTemplate.opsForValue().set(a, a);
+        }
+        long l2 = System.currentTimeMillis();
+        System.out.println((l2-l1)/1000);
+    }
+    @Test
+    public void testPipeline() {
+       fastRedisTemplate.executePipelined(new RedisCallback<Object>() {
+               @Override
+               public Object doInRedis(RedisConnection connection) throws DataAccessException {
+                   connection.openPipeline();
+                   long l1 = System.currentTimeMillis();
+                   for(int a = 0; a < 100000000; a++){
+                       connection.set(String.valueOf(a).getBytes(), String.valueOf(a).getBytes());
+                   }
+                   long l2 = System.currentTimeMillis();
+                   System.out.println((l2-l1)/1000);
+                   return null;
+               }
+          }
+       );
     }
 
 
