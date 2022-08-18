@@ -112,7 +112,7 @@ class SpringbootRedisApplicationTests {
                public Object doInRedis(RedisConnection connection) throws DataAccessException {
                    connection.openPipeline();
                    long l1 = System.currentTimeMillis();
-                   for(int a = 0; a < 100000000; a++){
+                   for(int a = 0; a < 5000000; a++){
                        connection.set(String.valueOf(a).getBytes(), String.valueOf(a).getBytes());
                    }
                    long l2 = System.currentTimeMillis();
